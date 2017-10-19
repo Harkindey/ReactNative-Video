@@ -10,11 +10,11 @@ import {
   StyleSheet,
   Text,
   View,
-  Dimensions,
-  Icon
+  Dimensions
 } from 'react-native';
 import Video from 'react-native-video';
 import LightVideo from './lights.mp4';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -44,16 +44,16 @@ export default class App extends Component<{}> {
     return (
       <View style={styles.container}>
         <View style={error ? styles.error : undefined}>
-        <Video 
-        source={{uri: "http://google.com/notavideo"}}
-        resizeMode="contain"
-        style={{ width: "100%", height }}
-        onError={this.handleError}
-        />
-        <View style={styles.videoCover}> 
-            { error && <Icon name="exclamation-triangle" size={30} color="red"/>}
-            {error && <Text>{error}</Text>}
-        </View>
+          <Video 
+          source={{uri: "http://google.com/notavideo"}}
+          resizeMode="contain"
+          style={{ width: "100%", height }}
+          onError={this.handleError}
+          />
+          <View style={styles.videoCover}> 
+              {error && <Icon name="exclamation-triangle" size={30} color="red"/>}
+              {error && <Text>{error}</Text>}
+          </View>
         </View>
       </View>
     );
