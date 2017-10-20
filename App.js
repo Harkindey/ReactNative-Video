@@ -11,7 +11,7 @@ import {
   Text,
   View,
   Dimensions,
-  Animated
+  ScrollView
 } from 'react-native';
 import Video from 'react-native-video';
 import LightVideo from './lights.mp4';
@@ -24,51 +24,74 @@ const instructions = Platform.select({
     'Shake or press menu button for dev menu',
 });
 
+const TRESHOLD = 100;
+
 export default class App extends Component<{}> {
+  state = {
+    paused: true
+  };
+
+  position ={
+    start:null,
+    end:null
+  };
+  
+  handleVideoLayout = (e) =>{
+    const {height} = Dimensions.get("Window");
+    this.position.start = e.nativeEvent.layout.y - height + TRESHOLD;
+    this.position.end = e.nativeEvent.layout.y + e.nativeEvent.layout.height - TRESHOLD;
+  }
+  handleScroll= (e) => {
+    const scrollPositon = e.nativeEvent.contentOffset.y;
+    const paused =  this.state.paused;
+    const{ start, end } = this.position;
+
+    if (scrollPositon > start && scrollPositon < end && paused){
+      this.setState({ paused: false });
+    } else if ((scrollPositon > end || scrollPositon < start && !paused)){
+      this.setState({ paused: true })
+    }
+  }
+  
   
   render() {
+    const {width} = Dimensions.get('window');
     return (
       <View style={styles.container}>
-          <Video
-          repeat 
-          source={LightVideo}
-          resizeMode="cover"
-          style={StyleMedia.absoluteFill}
-          onLoadStart={this.handleLoadStart}
-          />
-          <View>
-              <Text style={styles.header}>Log In</Text>
-              <TextInput
-                placeholder="Email"
-                style={styles.input}
+      <ScrollView scrollEventThrottle={16} onScroll>
+      {this.handleScroll}
+              <View style={styles.fakeCOntent}>
+                  <Text>
+                    {this.state.paused ? "Paused" : "Playing"}
+                  </Text> 
+              </View> 
+              <Video
+              repeat 
+              source={LightVideo}
+              paused={this.state.paused}
+              style={{ width, height: 300}}
+              onLayout={this.handleVideoLayout}
               />
-              <TextInput
-                placeholder="Password"
-                secureTextEntry
-                style={styles.input}
-              />
-          </View>
+                  <View style={styles.fakeCOntent}>
+                              <Text>
+                                {this.state.paused ? "Paused" : "Playing"}
+                              </Text> 
+                  </View> 
+        </ScrollView>  
         </View>
+
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
+  },
+  fakeContent : {
+    height: 850,
+    backgroundColor: "#CCC",
+    paddingTop: 250,
     alignItems: "center",
-    justifyContent: "center"
   },
-  header: {
-    fontSize: 30,
-    backgroundColor: "transparent",
-    color: '#FFF'
-  },
-  input: {
-    width: 300,
-    height: 50,
-    backgroundColor: '#FFF',
-    marginVertical: 15,
-    paddingLeft: 15,
-  }
 });
