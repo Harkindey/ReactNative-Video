@@ -115,7 +115,10 @@ componentWillMount() {
     }
     return (
       <View style={styles.container}>
-        <View style={styles.videoContainer}>
+        <View 
+            {...this.PanResponder.panHandlers}
+            style={styles.videoContainer}
+            >
             <Video 
               paused = {this.state.paused}
               source = {LightVideo}
