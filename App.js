@@ -10,7 +10,8 @@ import {
   StyleSheet,
   Text,
   View,
-  Dimensions
+  Dimensions,
+  Animated
 } from 'react-native';
 import Video from 'react-native-video';
 import LightVideo from './lights.mp4';
@@ -24,38 +25,30 @@ const instructions = Platform.select({
 });
 
 export default class App extends Component<{}> {
-  state= {
-    error: false
-  };
-  handleError= (meta) =>{
-    const {error: {code}} = meta;
-    let error = "An error Occured Playing this video";
-    switch(code) {
-      case -11800:
-        error = "Could not load video from URL";
-        break;
-    }
-    this.setState({ error });
-  }
+  
   render() {
-    const { width } = Dimensions.get("window");
-    const height = width * 0.5625;
-    const { error } = this.state
     return (
       <View style={styles.container}>
-        <View style={error ? styles.error : undefined}>
-          <Video 
-          source={{uri: "http://google.com/notavideo"}}
-          resizeMode="contain"
-          style={{ width: "100%", height }}
-          onError={this.handleError}
+          <Video
+          repeat 
+          source={LightVideo}
+          resizeMode="cover"
+          style={StyleMedia.absoluteFill}
+          onLoadStart={this.handleLoadStart}
           />
-          <View style={styles.videoCover}> 
-              {error && <Icon name="exclamation-triangle" size={30} color="red"/>}
-              {error && <Text>{error}</Text>}
+          <View>
+              <Text style={styles.header}>Log In</Text>
+              <TextInput
+                placeholder="Email"
+                style={styles.input}
+              />
+              <TextInput
+                placeholder="Password"
+                secureTextEntry
+                style={styles.input}
+              />
           </View>
         </View>
-      </View>
     );
   }
 }
@@ -63,19 +56,19 @@ export default class App extends Component<{}> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 250
-  },
-  videoCover: {
     alignItems: "center",
-    justifyContent: "center",
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    backgroundColor: "rgba(255,255,255, .9)",
+    justifyContent: "center"
   },
-  error:{
-    backgroundColor: "#000"
+  header: {
+    fontSize: 30,
+    backgroundColor: "transparent",
+    color: '#FFF'
   },
+  input: {
+    width: 300,
+    height: 50,
+    backgroundColor: '#FFF',
+    marginVertical: 15,
+    paddingLeft: 15,
+  }
 });
